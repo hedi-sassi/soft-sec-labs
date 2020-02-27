@@ -1,1 +1,8 @@
 *.o
+*.a
+checkerboard
+circle
+filter
+rect
+resize_image
+solid
