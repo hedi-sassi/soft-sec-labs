@@ -1,0 +1,30 @@
+## Bug Report
+
+### Name
+SEGV when squares are bigger than actual picture
+
+### Description
+
+When the selected square width is bigger than the image's dimension the program accesses invalid memory locations
+
+### Affected Lines
+In `checkerboard.c:112` to `checkerboard.c:115`
+
+### Expected vs Observed
+We expect the program to give an error. We observe a SEGV.
+
+
+### Steps to Reproduce
+Enter a square width bigger than the dimension of the picture to observe a SEGV
+
+
+#### Command
+
+```
+./checkerboard poc_checkerboard.png 100 100 150 ffff00 00ffff
+```
+
+
+### Suggested Fix Description
+
+Stop the program if the square width is bigger than the input image.

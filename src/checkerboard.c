@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
 
     long square_width = strtol(square_width_arg, &end_ptr, 10);
     
-    if (square_width <= 0 || *end_ptr) {
-        goto error;
+    if (square_width <= 0 || square_width > height || square_width > width || *end_ptr) {
+        goto error_square_size;
     }
 
     /* We assign colors to the palette */
@@ -136,5 +136,10 @@ error_img:
     free(img);
 error_mem:
     printf("Couldn't allocate memory\n");
+    return 1;
+
+error_square_size:
+
+    printf("Cannot create checkerboard with square's width bigger than image dimension ! \n");
     return 1;
 }
