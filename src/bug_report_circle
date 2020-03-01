@@ -1,0 +1,30 @@
+## Bug Report
+
+### Name
+Invalid coordinates on image border
+
+### Description
+
+The coordinate can be out-of-bound in circle.c in the two for loops since we do x_coord +- radius.
+This can cause the circle to affect random/close-by pixels. Or even crash the programm if the circle is centered in the two extreme corners.
+
+### Affected Lines
+In `circle.c:46`, `circle.c:47`, `circle.c:54`, `circle.c:67`, `circle.c:68` and`circle.c:75`
+
+### Expected vs Observed
+We expect a circle centered on the given center with a change of color inside the radius. We observe randomly colored pixels when the center of the circle is close to the borders or when the radius is too big.
+
+### Steps to Reproduce
+
+Enter coordinate 0,0 with a radius of 10
+
+#### Command
+
+```
+./circle input_image output_image 0 0 10 ffffffff
+```
+#### Proof-of-Concept Input (if needed)
+(attached: poc.png)
+
+### Suggested Fix Description
+Check for invalid coordinates in the loop with respect to the width and height of the image.

@@ -14,7 +14,7 @@ void filter_grayscale(struct image *img, void *weight_arr)
      * 
      * FIX: Initialize both variables to 0.
      */
-    for (unsigned short i; i < img->size_y; i++) {
+    for (unsigned short i; i < img->size_y; i++) {			
         for (unsigned short j; j < img->size_x; j++) {
             double luminosity = 0;
 

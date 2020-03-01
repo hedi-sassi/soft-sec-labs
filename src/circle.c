@@ -43,8 +43,28 @@ int main(int argc, char *argv[])
      * The coordinates were obtained by solving the equation:
      * (x - center_x)^2 + (y - center_y)^2 = radius^2
      */
+
     for (int x = center_x - radius; x <= center_x + radius; x++) {
+
+        //correct border points
+        
+        if(x < 0){
+            x = 0;
+        }
+        if(x > width -1){
+            x = width -1;
+        }
+
         int y = round(center_y + sqrt(radius * radius - (x - center_x) * (x - center_x)));
+
+        //sanity check for y coordinate
+
+        if(y < 0){
+            y = 0;
+        }
+        if(y > height -1){
+            y = height -1;
+        }
 
         image_data[y][x].red = (hex_color & 0xff0000) >> 16;
         image_data[y][x].green = (hex_color & 0x00ff00) >> 8;
@@ -52,6 +72,15 @@ int main(int argc, char *argv[])
         image_data[y][x].alpha = 0xff;
 
         y = round(center_y - sqrt(radius * radius - (x - center_x) * (x - center_x)));
+
+        //sanity check for y coordinate
+
+        if(y < 0){
+            y = 0;
+        }
+        if(y > height -1){
+            y = height -1;
+        }
 
         image_data[y][x].red = (hex_color & 0xff0000) >> 16;
         image_data[y][x].green = (hex_color & 0x00ff00) >> 8;
@@ -65,7 +94,24 @@ int main(int argc, char *argv[])
      * In practice a more efficient rasterization algorithm is used.
      */
     for (int y = center_y - radius; y <= center_y + radius; y++) {
+
+        //sanity check for y coordinate
+
+        if(y < 0){
+            y = 0;
+        }
+        if(y > height -1){
+            y = height -1;
+        }
+
         int x = round(center_x + sqrt(radius * radius - (y - center_y) * (y - center_y)));
+
+        if(x < 0){
+            x = 0;
+        }
+        if(x > width -1){
+            x = width -1;
+        }
 
         image_data[y][x].red = (hex_color & 0xff0000) >> 16;
         image_data[y][x].green = (hex_color & 0x00ff00) >> 8;
@@ -73,6 +119,13 @@ int main(int argc, char *argv[])
         image_data[y][x].alpha = 0xff;
 
         x = round(center_x - sqrt(radius * radius - (y - center_y) * (y - center_y)));
+
+        if(x < 0){
+            x = 0;
+        }
+        if(x > width -1){
+            x = width -1;
+        }
 
         image_data[y][x].red = (hex_color & 0xff0000) >> 16;
         image_data[y][x].green = (hex_color & 0x00ff00) >> 8;
