@@ -21,10 +21,10 @@ Enter coordinate 0,0 with a radius of 10
 #### Command
 
 ```
-./circle input_image output_image 0 0 10 ffffffff
+./circle poc.png output_image 0 0 10 ffffff
 ```
 #### Proof-of-Concept Input (if needed)
-(attached: poc.png)
+(attached: poc_circle.png)
 
 ### Suggested Fix Description
 Check for invalid coordinates in the loop with respect to the width and height of the image.
