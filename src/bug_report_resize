@@ -1,83 +1,63 @@
 ## Bug Report
 
 ### Name
-Wrong variable name for memory check
+Wrong variable name for memory check and memory access
 
 ### Description
 
 The wrong variable is used to perform a memory allocation check. This can cause SEGV if the memory wasn't allocated since the malloc check does nothing.
+The wrong variable is used to perform a memory access of image. width is used instead of new_width. This can cause SEGV since we can access out of bounds elements.
 
 ### Affected Lines
-In `resize.c:49`
+In `resize.c:49` and `resize.c:55`
 
 ### Expected vs Observed
 We expect an error message saying that there is a memory error when we ask for a very big image that doesn't fit in RAM. Instead we have a SEGV.
 
-### Steps to Reproduce
-
-Enter a big factor such that malloc returns NULL.
-
-#### Command
-
-```
-./resize_image poc.png output_image 100000
-
-```
-
-
-### Suggested Fix Description
-Instead of checking the pointer img->px != NULL check new_img->px != NULL
-
-
-
-### Name
-Wrong variable name for memory access
-
-### Description
-
-The wrong variable is used to perform a memory access of image. width is used instead of new_width. This can cause SEGV since we can access out of bounds elements.
-
-### Affected Lines
-In `resize.c:55`
-
-### Expected vs Observed
-We expect the programm to access memory according to the lines and columns of the image but with this bug the programm may access pixels twice/ in an abnormal way.
+For the second misnamed variable, we expect the programm to access memory according to the lines and columns of the image but with this bug the programm may access pixels twice/ in an abnormal way.
 
 ### Steps to Reproduce
 
-Enter a picture that is not of only one color (checkerbox for example) and check for strange pixels.
+Enter a big factor such that malloc returns NULL. (first misnamed variable)
+
+Enter a picture that is not of only one color (checkerbox for example) and check for strange pixels. (second misnamed variable)
 
 #### Command
 
+for the first and second misnamed variables in that order:
 ```
+./resize_image poc.png output_image 100000  
+
 ./resize_image checkerbox.png output_image 2
 
 ```
 
 
 ### Suggested Fix Description
+Instead of checking the pointer img->px != NULL check new_img->px != NULL
 Change (struct pixel (*)[width])new_img->px  by  (struct pixel (*)[new_width])new_img->px
 
 
 
 
+
 ### Name
-Double free and image not freed
+Double free, image not freed and pointer not set to NULL after free
 
 ### Description
 
 The variable img->px is freed 2 times in a row => undefined behaviour (corrupt memory etc...).
-The variable img is not freed in case of memory error.
+The variable img is not freed in case of memory error. Also several pointers are not set to NULL once freed.
 
 ### Affected Lines
-In `resize.c:87`
+In `resize.c:87`, `resize.c:84`, `resize.c:72`, `resize.c:73`, `resize.c:75` and `resize.c:76`
 
 ### Expected vs Observed
 When malloc fails we expect a nice error message. Instead we can have SEGV or other errors since the memory is corrupted after the double free. Adding to that, the variable img is not freed.
 
 ### Steps to Reproduce
 
-Launch the program when you don't have any memory available for the struct image. 
+Launch the program when you don't have any memory available for the struct image.
 
 #### Command
 
@@ -88,7 +68,8 @@ Launch the program when you don't have any memory available for the struct image
 
 
 ### Suggested Fix Description
-Remove the unnecessary call to free and add free(img) after free(img->px)
+Remove the unnecessary call to free and add free(img) after free(img->px).
+Set the pointers to NULL after they are freed.
 
 
 

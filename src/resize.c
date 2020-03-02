@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
     unsigned new_height = (unsigned) (img->size_y * factor);
     unsigned new_width = (unsigned) (img->size_x * factor);
 
+    //printf("size %u", new_width);
+    //fflush(stdout);
+
     /* Allocate memory for the resized image */
     new_img = malloc(sizeof(struct image));
 
@@ -73,13 +76,13 @@ int main(int argc, char *argv[])
     store_png(output, new_img, NULL, 0);
     free(img->px);                          //free without NULLing pointers ? can be bad
     free(img);
-    //img->px = NULL;
-    //img = NULL;
+    img->px = NULL;
+    img = NULL;
 
     free(new_img->px);
     free(new_img);
-    //new_img->px = NULL;
-    //new_img = NULL;
+    new_img->px = NULL;
+    new_img = NULL;
     return 0;
 
 error_usage:
@@ -88,9 +91,12 @@ error_usage:
 
 error_memory_img:
     free(new_img);
+    new_img = NULL;
 error_memory:
     free(img->px);  //had a double free of img->px and no free of img
     free(img);
+    img->px = NULL;
+    img = NULL;
     printf("Memory error!");
     return 1;
 }
