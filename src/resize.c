@@ -44,19 +44,21 @@ int main(int argc, char *argv[])
     new_img->size_x = new_width;
     new_img->size_y = new_height;
 
-    new_img->px = malloc(new_width * new_height * sizeof(struct pixel));
-
-    if (!img->px) {
+    new_img->px = malloc(new_width * new_height * sizeof(struct pixel)); 
+    
+    if (!new_img->px) {             //wrong variable name. was img->px but need to check new_img->px in case malloc returns NULL
         goto error_memory_img;
     }
-
+    
+    
     {
         struct pixel (*image_data)[width] = (struct pixel (*)[width])img->px;
-        struct pixel (*image_data_new)[new_width] = (struct pixel (*)[width])new_img->px;
+        struct pixel (*image_data_new)[new_width] = (struct pixel (*)[new_width])new_img->px; //wrong rename was width instead of new_width
+        
 
         /* Iterate over all pixels in the new image and fill them with the nearest neighbor in the old one */
-        for (unsigned y = 0; y < round(factor*img->size_y); y++) {
-            for (unsigned x = 0; x < round(factor*img->size_x); x++) {
+        for (unsigned y = 0; y < new_height; y++) {
+            for (unsigned x = 0; x < new_width; x++) {          //behavior of x and y < round(factor * width/heigth) not OK
 
                 /* Calculate the location of the pixel in the old image */
                 unsigned nearest_x = x / factor;
@@ -69,11 +71,15 @@ int main(int argc, char *argv[])
     }
 
     store_png(output, new_img, NULL, 0);
-    free(img->px);
+    free(img->px);                          //free without NULLing pointers ? can be bad
     free(img);
+    //img->px = NULL;
+    //img = NULL;
 
     free(new_img->px);
     free(new_img);
+    //new_img->px = NULL;
+    //new_img = NULL;
     return 0;
 
 error_usage:
@@ -83,8 +89,8 @@ error_usage:
 error_memory_img:
     free(new_img);
 error_memory:
-    free(img->px);
-    free(img->px);
+    free(img->px);  //had a double free of img->px and no free of img
+    free(img);
     printf("Memory error!");
     return 1;
 }

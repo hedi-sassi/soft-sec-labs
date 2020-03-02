@@ -1,0 +1,125 @@
+## Bug Report
+
+### Name
+Wrong variable name for memory check
+
+### Description
+
+The wrong variable is used to perform a memory allocation check. This can cause SEGV if the memory wasn't allocated since the malloc check does nothing.
+
+### Affected Lines
+In `resize.c:49`
+
+### Expected vs Observed
+We expect an error message saying that there is a memory error when we ask for a very big image that doesn't fit in RAM. Instead we have a SEGV.
+
+### Steps to Reproduce
+
+Enter a big factor such that malloc returns NULL.
+
+#### Command
+
+```
+./resize_image poc.png output_image 100000
+
+```
+
+
+### Suggested Fix Description
+Instead of checking the pointer img->px != NULL check new_img->px != NULL
+
+
+
+### Name
+Wrong variable name for memory access
+
+### Description
+
+The wrong variable is used to perform a memory access of image. width is used instead of new_width. This can cause SEGV since we can access out of bounds elements.
+
+### Affected Lines
+In `resize.c:55`
+
+### Expected vs Observed
+We expect the programm to access memory according to the lines and columns of the image but with this bug the programm may access pixels twice/ in an abnormal way.
+
+### Steps to Reproduce
+
+Enter a picture that is not of only one color (checkerbox for example) and check for strange pixels.
+
+#### Command
+
+```
+./resize_image checkerbox.png output_image 2
+
+```
+
+
+### Suggested Fix Description
+Change (struct pixel (*)[width])new_img->px  by  (struct pixel (*)[new_width])new_img->px
+
+
+
+
+### Name
+Double free and image not freed
+
+### Description
+
+The variable img->px is freed 2 times in a row => undefined behaviour (corrupt memory etc...).
+The variable img is not freed in case of memory error.
+
+### Affected Lines
+In `resize.c:87`
+
+### Expected vs Observed
+When malloc fails we expect a nice error message. Instead we can have SEGV or other errors since the memory is corrupted after the double free. Adding to that, the variable img is not freed.
+
+### Steps to Reproduce
+
+Launch the program when you don't have any memory available for the struct image. 
+
+#### Command
+
+```
+./resize_image poc.png output_image 2
+
+```
+
+
+### Suggested Fix Description
+Remove the unnecessary call to free and add free(img) after free(img->px)
+
+
+
+
+### Name
+Comparisons between double and unsigned
+
+### Description
+
+in the for loops we compare x and y ,which are unsigned values, with the result of a round that can overflow when big numbers are entered.
+This can cause SEGV.
+
+### Affected Lines
+In `resize.c:58` and `resize.c:59`
+
+### Expected vs Observed
+We expect the program to work since we were able to allocate memory even if the factor was big. But the program returns a SEGV
+
+### Steps to Reproduce
+
+Launch the program with a big factor
+
+#### Command
+
+```
+./resize_image poc.png output_image 1000000000000000000000
+
+
+```
+
+
+### Suggested Fix Description
+replace y < round(..) by y < new_heigth. Same modifications for x
+
