@@ -1,41 +1,35 @@
 ## Bug Report
 
 ### Name
-Wrong variable name for memory check and memory access
+No memory allocation check
 
 ### Description
 
-The wrong variable is used to perform a memory allocation check. This can cause SEGV if the memory wasn't allocated since the malloc check does nothing.
-The wrong variable is used to perform a memory access of image. width is used instead of new_width. This can cause SEGV since we can access out of bounds elements.
+Several pointers returned by malloc are not checked.
 
 ### Affected Lines
-In `resize.c:49` and `resize.c:55`
+In `resize.c:47` 
 
 ### Expected vs Observed
-We expect an error message saying that there is a memory error when we ask for a very big image that doesn't fit in RAM. Instead we have a SEGV.
+We expect an error message saying that there is a memory error when we asking for more memory than available. Instead we have a SEGV.
 
-For the second misnamed variable, we expect the programm to access memory according to the lines and columns of the image but with this bug the programm may access pixels twice/ in an abnormal way.
 
 ### Steps to Reproduce
 
-Enter a big factor such that malloc returns NULL. (first misnamed variable)
+Enter a big factor such that malloc returns NULL.
 
-Enter a picture that is not of only one color (checkerbox for example) and check for strange pixels. (second misnamed variable)
 
 #### Command
 
-for the first and second misnamed variables in that order:
 ```
 ./resize_image poc.png output_image 100000  
-
-./resize_image checkerbox.png output_image 2
 
 ```
 
 
 ### Suggested Fix Description
-Instead of checking the pointer img->px != NULL check new_img->px != NULL
-Change (struct pixel (*)[width])new_img->px  by  (struct pixel (*)[new_width])new_img->px
+Add check : new_img->px != NULL
+
 
 
 
