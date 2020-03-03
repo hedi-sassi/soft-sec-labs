@@ -27,6 +27,10 @@ int main(int argc, char *argv[])
     if (load_png(input, &img)) {
         return 1;
     }
+    
+    if(img == NULL || img->px == NULL){
+        return 1;
+    }
 
     unsigned height = img->size_y;
     unsigned width = img->size_x;
@@ -74,7 +78,7 @@ int main(int argc, char *argv[])
     }
 
     store_png(output, new_img, NULL, 0);
-    free(img->px);                          //free without NULLing pointers ? can be bad
+    free(img->px);                          
     free(img);
     img->px = NULL;
     img = NULL;

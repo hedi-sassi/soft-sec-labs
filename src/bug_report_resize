@@ -42,12 +42,12 @@ Change (struct pixel (*)[width])new_img->px  by  (struct pixel (*)[new_width])ne
 
 
 ### Name
-Double free, image not freed and pointer not set to NULL after free
+Double free and image not freed 
 
 ### Description
 
 The variable img->px is freed 2 times in a row => undefined behaviour (corrupt memory etc...).
-The variable img is not freed in case of memory error. Also several pointers are not set to NULL once freed.
+The variable img is not freed in case of memory error.
 
 ### Affected Lines
 In `resize.c:87`, `resize.c:84`, `resize.c:72`, `resize.c:73`, `resize.c:75` and `resize.c:76`
