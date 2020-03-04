@@ -1,18 +1,18 @@
 ## Bug Report
 
 ### Name
-No memory allocation check
+Confusion in variable names
 
 ### Description
 
-Several pointers returned by malloc are not checked.
+Malloc check on wrong variable and wrong variable name in memory access.
 
 ### Affected Lines
-In `resize.c:47` 
+In `resize.c:47` , `resize.c:60` 
 
 ### Expected vs Observed
 We expect an error message saying that there is a memory error when we asking for more memory than available. Instead we have a SEGV.
-
+We also expect the program to access memory with respect to the new_width but it accesses memory as a function of the width.
 
 ### Steps to Reproduce
 
@@ -28,7 +28,8 @@ Enter a big factor such that malloc returns NULL.
 
 
 ### Suggested Fix Description
-Add check : new_img->px != NULL
+Add check : new_img->px != NULL instead of img->px != NULL
+replace (struct pixel (*)[width])new_img->px  with (struct pixel (*)[new_width])new_img->px
 
 
 

@@ -28,9 +28,6 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    if(img == NULL || img->px == NULL){
-        return 1;
-    }
 
     unsigned height = img->size_y;
     unsigned width = img->size_x;
