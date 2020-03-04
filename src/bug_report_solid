@@ -1,0 +1,62 @@
+
+
+### Name
+Command injection bug
+
+### Description
+
+A malicious user can enter a command in the output name argument.
+
+### Affected Lines
+In `solid.c:121`, `solid.c:122`
+
+### Expected vs Observed
+We expect the program to display statistics about file size but a user can inject commands.
+
+### Steps to Reproduce
+
+Select an output name countaining: <filename> ; <command to execute>
+
+#### Command
+
+```
+./solid "output_name; gnome-terminal" 12 12 ffffff
+
+
+```
+
+
+### Suggested Fix Description
+Check that the output name variable only contains alpha num char and ".", "_", "-"
+
+
+
+
+### Name
+Control flow bug
+
+### Description
+
+when an error occurs we expect the palette to be freed (as written in the comments). But a goto is executed before the free => the free is never executed.
+
+### Affected Lines
+In `solid.c:49`
+
+### Expected vs Observed
+We expect the program to free the palette if the height is smaller than 0 but the program just leave without freeing the memory.
+
+### Steps to Reproduce
+
+Select an output name countaining: <filename> ; <command to execute>
+
+#### Command
+
+```
+./solid output_name -1 1 00ffff
+
+
+```
+
+
+### Suggested Fix Description
+Move the free in the error handling.

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "pngparser.h"
+#include <ctype.h> 
 
 /* We allocate the memory for the palette for this image */
 struct pixel *allocate_palette()
@@ -44,14 +45,14 @@ int main(int argc, char *argv[])
     /* If the user provides negative height or the height is 0 and the end_ptr hasn't moved
      * we issue an error and free palette
      */
-    if (height < 0 || *end_ptr)
-        goto error;
-        free(palette);
-
+    if (height <= 0 || *end_ptr){                  //never free palette since goto before... free(palette) must be in error handling)
+        goto error;                                 //also don't allow height and width of size 0...
+    }
+        
 
     long width = strtol(width_arg, &end_ptr, 10);
 
-    if (width < 0 || *end_ptr) {
+    if (width <= 0 || *end_ptr) {
         goto error;
     }
 
@@ -60,6 +61,17 @@ int main(int argc, char *argv[])
     if (*end_ptr) {
         goto error;
     } 
+
+    //protect against command injection
+    for(size_t i = 0; i < strlen(output_name); i++){
+
+        char curr = output_name[i];
+
+        if(!isalnum(curr) && curr != '_' && curr != '-' && curr != '.'){
+            goto error;
+        }
+
+    }
 
     palette[0].red = (color & 0xff0000) >> 16;
     palette[0].green = (color & 0x00ff00) >> 8;
@@ -129,10 +141,12 @@ int main(int argc, char *argv[])
 
 error:
     printf("Usage: %s output_name height width hex_color\n", argv[0]);
+    free(palette); 
     return 1;
 
 error_px:
     free(img->px);
+    free(img);
 error_img:
     free(img);
 error_mem:
