@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
     char input[INPUT_SIZE];
     char output[INPUT_SIZE];
 
-    int radius;
     struct image *img;
 
     /* There isn't any complex error handling in this function, so we use a simple if */
@@ -17,9 +16,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if(strlen(argv[1]) > INPUT_SIZE || strlen(argv[2]) > INPUT_SIZE){
+        exit(1);
+    }
+
     // Copy the filenames into separate arrays for easier reference
-    strncpy(input, argv[1], INPUT_SIZE);                                             //buffer overflow. should use strncpy with size 256
-    strncpy(output, argv[2], INPUT_SIZE);
+    strcpy(input, argv[1]);                                             
+    strcpy(output, argv[2]);
 
     /* Parse the points. Invalid input will just set the coordinate to 0.
      * The program will still work.

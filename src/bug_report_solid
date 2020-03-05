@@ -60,3 +60,37 @@ Select an output name countaining: <filename> ; <command to execute>
 
 ### Suggested Fix Description
 Move the free in the error handling.
+
+
+
+
+### Name
+Memory allocation not checked
+
+### Description
+
+In allocate palette we don't check that malloc returned a valid pointer.
+
+### Affected Lines
+In `solid.c:9`
+
+### Expected vs Observed
+If malloc fails, we will have a SEGV. We expect the program to exit gracefully but we will get a SEGV.
+
+### Steps to Reproduce
+
+Execute the program when you don't have memory.
+
+#### Command
+
+```
+./solid output_name 10 10 00ffff
+
+
+```
+
+
+### Suggested Fix Description
+Check that the memory allocation didn't fail.
+
+

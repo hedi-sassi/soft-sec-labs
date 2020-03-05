@@ -7,6 +7,11 @@
 struct pixel *allocate_palette()
 {
     struct pixel *ptr = malloc(sizeof(struct pixel));
+
+    if(!ptr){
+        exit(1);
+    }
+
     return ptr;
 }
 
@@ -115,6 +120,7 @@ int main(int argc, char *argv[])
     
     free(img->px);
     free(img);
+    free(palette); 
 
     /* We want to inform user how big the new image is.
      * "stat -c %s filename" prints the size of the file
@@ -146,10 +152,10 @@ error:
 
 error_px:
     free(img->px);
-    free(img);
 error_img:
     free(img);
 error_mem:
+    free(palette); 
     printf("Couldn't allocate memory\n");
     return 1;
 }

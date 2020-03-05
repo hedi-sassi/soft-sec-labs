@@ -27,5 +27,5 @@ Select an input or output name bigger than 256
 
 
 ### Suggested Fix Description
-Use strncpy with maxe length 256 instead of strcpy.
+Exit when user tries to enter names bigger than 256 characters
 

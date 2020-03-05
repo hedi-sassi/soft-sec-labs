@@ -16,8 +16,8 @@ void filter_grayscale(struct image *img, void *weight_arr)
      * 
      * FIX: Initialize both variables to 0.
      */
-    for (unsigned short i; i < img->size_y; i++) {			
-        for (unsigned short j; j < img->size_x; j++) {
+    for (unsigned short i = 0; i < img->size_y; i++) {			
+        for (unsigned short j = 0; j < img->size_x; j++) {
             double luminosity = 0;
 
             luminosity += weights[0] * image_data[i][j].red;
@@ -62,17 +62,16 @@ void filter_blur(struct image *img, void *r)
             for (long y_offset = - radius; y_offset <= radius; y_offset++) {
                 for (long x_offset = - radius; x_offset <= radius; x_offset++) {
                     
-                   /* BUG!
-                    * This bug isn't graded.
-                    * 
-                    * FIX: Limit reads only to valid memory
-                    */
-                    struct pixel current = image_data[i + y_offset][j + x_offset];
+                   if(i + y_offset < 0 || i + y_offset >= img->size_y || j + x_offset < 0 || j + x_offset >= img->size_x){
 
-                    red += current.red;
-                    blue += current.blue;
-                    green += current.green;
-                    alpha += current.alpha;
+                        struct pixel current = image_data[i + y_offset][j + x_offset];
+
+                        red += current.red;
+                        blue += current.blue;
+                        green += current.green;
+                        alpha += current.alpha;
+                   }
+                    
                 }
             }
 
@@ -107,7 +106,7 @@ struct pixel * get_pixel()
         exit(1);
     }
 
-    return &px;
+    return px;
 }
 
 /* This filter just negates every color in the image */
@@ -181,13 +180,22 @@ int main(int argc, char *argv[])
     fil.filter = NULL;
     fil.arg = NULL;
 
+    if(strlen(argv[1]) > INPUT_SIZE || strlen(argv[2]) > INPUT_SIZE || strlen(argv[3]) > INPUT_SIZE){
+        exit(1);
+    }
+
     /* Copy arguments for easier reference */
     strncpy(input, argv[1],INPUT_SIZE);
-    strncpy(output, argv[2],INPUT_SIZE);                //use strncpy !!!!
+    strncpy(output, argv[2],INPUT_SIZE);                
     strncpy(command, argv[3],INPUT_SIZE);
 
     /* If the filter takes an argument, copy it */
-    if (argv[4]) {
+    if (argv[4] ) {
+
+        if(strlen(argv[4]) > INPUT_SIZE){
+            exit(1);
+        }
+        
         strncpy(arg, argv[4],INPUT_SIZE);
     }
 

@@ -35,8 +35,6 @@ int main(int argc, char *argv[])
     unsigned new_height = (unsigned) (img->size_y * factor);
     unsigned new_width = (unsigned) (img->size_x * factor);
 
-    //printf("size %u", new_width);
-    //fflush(stdout);
 
     /* Allocate memory for the resized image */
     new_img = malloc(sizeof(struct image));
