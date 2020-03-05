@@ -4,10 +4,10 @@ SEGV when square_width doesn't divide height and width
 
 ### Description
 
-When the selected square width doesn't divide the two dimensions, some pixels are not initialized => SEGV  when storing the picture.
+When the selected square width doesn't divide the two dimensions or when the square width is bigger than the dimensions some pixels are not initialized => SEGV  when storing the picture.
 
 ### Affected Lines
-In `checkerboard.c:99` to `checkerboard.c:100`
+In `checkerboard.c:99`, `checkerboard.c:100`
 
 ### Expected vs Observed
 We expect the program to give partial squares when the square width doesn't divide the dimension. But the program returns a SEGV.
