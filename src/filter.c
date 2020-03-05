@@ -41,60 +41,88 @@ void filter_grayscale(struct image *img, void *weight_arr)
  * They are ignored (e.g. 5x5 box will turn into a 3x3 box in the corner).
  * 
  */
-void filter_blur(struct image *img, void *r)
-{
-    struct pixel (*image_data)[img->size_x] = (struct pixel (*)[img->size_x])img->px;
-    int radius = *((int*) r);
+void filter_blur(struct image *img, void *r) {
 
-    struct pixel (*new_data)[img->size_x] = malloc(sizeof(struct pixel) * img->size_x * img->size_y);
+  struct pixel(*image_data)[img->size_x] =(struct pixel(*)[img->size_x])img->px;
+  
+  int radius = *((int *)r);
 
-    if (!new_data) {
-        return;
-    }
+  struct pixel(*new_data)[img->size_x] =
+      malloc(sizeof(struct pixel) * img->size_x * img->size_y);
 
-    /* We iterate over all pixels */
-    for (long i = 0; i < img->size_y; i++) {
-        for (long j = 0; j < img->size_x; j++) {
-
-            unsigned red = 0, green = 0, blue = 0, alpha = 0;
-
-            /* We iterate over all pixels in the square */
-            for (long y_offset = - radius; y_offset <= radius; y_offset++) {
-                for (long x_offset = - radius; x_offset <= radius; x_offset++) {
-                    
-                   if(i + y_offset < 0 || i + y_offset >= img->size_y || j + x_offset < 0 || j + x_offset >= img->size_x){
-
-                        struct pixel current = image_data[i + y_offset][j + x_offset];
-
-                        red += current.red;
-                        blue += current.blue;
-                        green += current.green;
-                        alpha += current.alpha;
-                   }
-                    
-                }
-            }
-
-            int num_pixels = 2 * radius + 1;
-
-            /* Calculate the average */
-            red /= num_pixels * num_pixels;
-            green /= num_pixels * num_pixels;
-            blue /= num_pixels * num_pixels;
-            alpha /= num_pixels * num_pixels;
-
-            /* Assign new values */
-            new_data[i][j].red = red;
-            new_data[i][j].green = green;
-            new_data[i][j].blue = blue;
-            new_data[i][j].alpha = alpha;
-        }
-    }
-
-    free(img->px);
-    img->px = (struct pixel *)new_data;
+  if (!new_data) {
     return;
+  }
+
+  /* We iterate over all pixels */
+  for (long i = 0; i < img->size_y; i++) {
+    for (long j = 0; j < img->size_x; j++) {
+
+      unsigned red = 0, green = 0, blue = 0, alpha = 0;
+
+      long min_y = i - radius;
+
+      if (min_y < 0) {
+        min_y = 0;
+      }
+
+      long max_y = i + radius;
+
+      if (max_y >= img->size_y) {
+        max_y = img->size_y - 1;
+      }
+
+      long min_x = j - radius;
+
+      if (min_x < 0) {
+        min_x = 0;
+      }
+
+      long max_x = j + radius;
+
+      if (max_x >= img->size_x) {
+        max_x = img->size_x - 1;
+      }
+
+      /* We iterate over all pixels in the square */
+      for (long y_offset = min_y; y_offset <= max_y; y_offset++) {
+        for (long x_offset = min_x; x_offset <= max_x; x_offset++) {
+
+          /* BUG!
+           * This bug isn't graded.
+           *
+           * FIX: Limit reads only to valid memory
+           */
+          struct pixel current = image_data[y_offset][x_offset];
+
+          red += current.red;
+          blue += current.blue;
+          green += current.green;
+          alpha += current.alpha;
+        }
+      }
+
+      int num_pixels = 2 * radius + 1;
+
+      /* Calculate the average */
+      red /= num_pixels * num_pixels;
+      green /= num_pixels * num_pixels;
+      blue /= num_pixels * num_pixels;
+      alpha /= num_pixels * num_pixels;
+
+      /* Assign new values */
+      new_data[i][j].red = red;
+      new_data[i][j].green = green;
+      new_data[i][j].blue = blue;
+      new_data[i][j].alpha = alpha;
+    }
+  }
+
+  free(img->px);
+  img->px = (struct pixel *)new_data;
+  return;
 }
+
 
 /* We allocate and return a pixel */
 struct pixel * get_pixel()
@@ -195,7 +223,7 @@ int main(int argc, char *argv[])
         if(strlen(argv[4]) > INPUT_SIZE){
             exit(1);
         }
-        
+
         strncpy(arg, argv[4],INPUT_SIZE);
     }
 
