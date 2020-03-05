@@ -103,7 +103,8 @@ struct pixel * get_pixel()
     struct pixel * px = malloc(sizeof(struct pixel));                        //the pixel isn't allocated on the heap => use malloc
 
     if(!px){
-        return 1;
+        printf("Error ! Not enough memory to allocate pixel");
+        exit(1);
     }
 
     return &px;
@@ -251,4 +252,5 @@ error_usage:
     printf("blur radius_arg\n");
     printf("alpha hex_alpha\n");
     return 1;
+
 }
