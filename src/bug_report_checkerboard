@@ -1,30 +1,28 @@
-## Bug Report
 
 ### Name
-SEGV when squares are bigger than actual picture
+SEGV when square_width doesn't divide height and width
 
 ### Description
 
-When the selected square width is bigger than the image's dimension the program accesses invalid memory locations
+When the selected square width doesn't divide the two dimensions, some pixels are not initialized => SEGV  when storing the picture.
 
 ### Affected Lines
-In `checkerboard.c:112` to `checkerboard.c:115`
+In `checkerboard.c:99` to `checkerboard.c:100`
 
 ### Expected vs Observed
-We expect the program to give an error. We observe a SEGV.
+We expect the program to give partial squares when the square width doesn't divide the dimension. But the program returns a SEGV.
 
 
 ### Steps to Reproduce
-Enter a square width bigger than the dimension of the picture to observe a SEGV
+Enter a square width that doesn't divide the two dimensions
 
 
 #### Command
 
 ```
-./checkerboard poc_checkerboard.png 100 100 150 ffff00 00ffff
+./checkerboard poc_checkerboard.png 100 100 8 ffff00 00ffff
 ```
 
 
 ### Suggested Fix Description
-
-Stop the program if the square width is bigger than the input image.
+Increase the number of squares in the for loop but check that we don't go out-of-bound when coloring the additional squares.

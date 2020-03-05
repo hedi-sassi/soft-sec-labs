@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
 
     long square_width = strtol(square_width_arg, &end_ptr, 10);
     
-    if (square_width <= 0 || square_width > height || square_width > width || *end_ptr) {
-        goto error_square_size;
+    if (square_width <= 0 || *end_ptr) {
+        goto error;
     }
 
     /* We assign colors to the palette */
@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
         struct pixel (*image_data)[width] = (struct pixel (*)[width])img->px;
 
         /* We segment the image into squares and fill each square with its color */
-        for (int i = 0; i < (height + square_width - 1)/square_width; i++) {
-            for (int j = 0; j < (width + square_width - 1)/square_width; j++) {
+        for (int i = 0; i <= (height + square_width - 1)/square_width; i++) {
+            for (int j = 0; j <= (width + square_width - 1)/square_width; j++) {
 
                 /* Calculate the color based on the square index */
                 int color = (i + j)%2;
@@ -106,16 +106,23 @@ int main(int argc, char *argv[])
                 int square_top_left_x = j * square_width;
                 int square_top_left_y = i * square_width;
 
+
                 /* This iterates over a square and fills it with the correct color */
                 for (int x = 0; x < square_width; x++) {
                     for (int y = 0; y < square_width; y++) {
-                        image_data[square_top_left_y + y][square_top_left_x + x].red = palette[color].red;
-                        image_data[square_top_left_y + y][square_top_left_x + x].green = palette[color].green;
-                        image_data[square_top_left_y + y][square_top_left_x + x].blue = palette[color].blue;
-                        image_data[square_top_left_y + y][square_top_left_x + x].alpha = 0xff;
+
+                        if(square_top_left_y + y < height && square_top_left_x + x < width){
+                            image_data[square_top_left_y + y][square_top_left_x + x].red = palette[color].red;
+                            image_data[square_top_left_y + y][square_top_left_x + x].green = palette[color].green;
+                            image_data[square_top_left_y + y][square_top_left_x + x].blue = palette[color].blue;
+                            image_data[square_top_left_y + y][square_top_left_x + x].alpha = 0xff;
+                        }
+                        
                     }
                 }
+                
             }
+           
         }
     }
 
@@ -138,8 +145,4 @@ error_mem:
     printf("Couldn't allocate memory\n");
     return 1;
 
-error_square_size:
-
-    printf("Cannot create checkerboard with square's width bigger than image dimension ! \n");
-    return 1;
 }
