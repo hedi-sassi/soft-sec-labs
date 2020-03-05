@@ -1,0 +1,31 @@
+
+
+### Name
+Buffer overflow vulnerability
+
+### Description
+
+The program makes use of strcpy without checking the input size. There is a buffer overflow vulnerability if a user enters an input bigger than 256.
+
+### Affected Lines
+In `rect.c:21`, `rect.c:22`
+
+### Expected vs Observed
+When entering arguments greater than 256 characters the program should only consider the 256 first characters. Here the program crashes since we are overwritting memory.
+
+### Steps to Reproduce
+
+Select an input or output name bigger than 256
+
+#### Command
+
+```
+./rect a (4000 times) output 0 0 0 0 ff00ff
+
+
+```
+
+
+### Suggested Fix Description
+Use strncpy with maxe length 256 instead of strcpy.
+

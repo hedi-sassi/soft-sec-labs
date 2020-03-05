@@ -1,11 +1,12 @@
 #include <string.h>
 #include "pngparser.h"
 
+#define INPUT_SIZE  256
 
 int main(int argc, char *argv[])
 {
-    char input[256];
-    char output[256];
+    char input[INPUT_SIZE];
+    char output[INPUT_SIZE];
 
     int radius;
     struct image *img;
@@ -17,8 +18,8 @@ int main(int argc, char *argv[])
     }
 
     // Copy the filenames into separate arrays for easier reference
-    strcpy(input, argv[1]);
-    strcpy(output, argv[2]);
+    strncpy(input, argv[1], INPUT_SIZE);                                             //buffer overflow. should use strncpy with size 256
+    strncpy(output, argv[2], INPUT_SIZE);
 
     /* Parse the points. Invalid input will just set the coordinate to 0.
      * The program will still work.
@@ -57,8 +58,8 @@ int main(int argc, char *argv[])
      * - below TL
      * - above BR
      */
-    for (int i = 0; i <= height; i++) {
-        for (int j = 0; j <= width; j++) {
+    for (int i = 0; i < height; i++) {      //out of bound problem since it was i <= height
+        for (int j = 0; j < width; j++) {
 
             // Check if the pixel is in the rectangle
 
