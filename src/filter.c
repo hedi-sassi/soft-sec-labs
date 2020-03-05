@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "pngparser.h"
 
+#define INPUT_SIZE 256
+
 /* This filter iterates over the image and calculates the average value of the color channels for every pixel
  * This value is then written to all the channels to get the grayscale representation of the image
  */
@@ -98,7 +100,12 @@ void filter_blur(struct image *img, void *r)
 /* We allocate and return a pixel */
 struct pixel * get_pixel()
 {
-    struct pixel px;
+    struct pixel * px = malloc(sizeof(struct pixel));                        //the pixel isn't allocated on the heap => use malloc
+
+    if(!px){
+        return 1;
+    }
+
     return &px;
 }
 
@@ -156,10 +163,10 @@ void execute_filter(struct filter *fil)
 int main(int argc, char *argv[])
 {
     struct filter fil;
-    char arg[256];
-    char input[256];
-    char output[256];
-    char command[256];
+    char arg[INPUT_SIZE];
+    char input[INPUT_SIZE];
+    char output[INPUT_SIZE];
+    char command[INPUT_SIZE];
     int radius;
     uint8_t alpha;
     struct image *img = NULL;
@@ -174,13 +181,13 @@ int main(int argc, char *argv[])
     fil.arg = NULL;
 
     /* Copy arguments for easier reference */
-    strcpy(input, argv[1]);
-    strcpy(output, argv[2]);
-    strcpy(command, argv[3]);
+    strncpy(input, argv[1],INPUT_SIZE);
+    strncpy(output, argv[2],INPUT_SIZE);                //use strncpy !!!!
+    strncpy(command, argv[3],INPUT_SIZE);
 
     /* If the filter takes an argument, copy it */
     if (argv[4]) {
-        strcpy(arg, argv[4]);
+        strncpy(arg, argv[4],INPUT_SIZE);
     }
 
     /* Error when loading a png image */

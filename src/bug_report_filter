@@ -1,0 +1,63 @@
+
+### Name
+Buffer overflow vulnerability
+
+### Description
+
+The program makes use of strcpy without checking the input size. There is a buffer overflow vulnerability if a user enters an input bigger than 256.
+
+### Affected Lines
+In `filter.c:177`, `filter.c:178`, `filter.c:179` and `filter.c:183`
+
+### Expected vs Observed
+When entering arguments greater than 256 characters the program should only consider the 256 first characters. Here the program crashes since we are overwritting memory.
+
+### Steps to Reproduce
+
+Select arguments greater than 256 characters
+
+#### Command
+
+```
+./filter a(4000 time) b, negative
+
+
+```
+
+
+### Suggested Fix Description
+Use strncpy with maxe length 256 instead of strcpy.
+
+
+
+
+### Name
+Memory not properly allocated
+
+### Description
+
+The get_pixel function allocates the struct on the stack but it should allocate it on the heap or else the returned pointer will be NULL.
+
+### Affected Lines
+In `filter.c:101` and `filter.c:102`
+
+### Expected vs Observed
+We expect the function to return an allocated pixel struct but the function will always return a NULL pointer.
+
+### Steps to Reproduce
+
+Select the negative filter
+
+#### Command
+
+```
+./filter a b negative
+
+
+```
+
+
+### Suggested Fix Description
+Use malloc, check that the memory was properly allocated and then return the pointer.
+
+
